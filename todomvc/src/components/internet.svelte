@@ -3,7 +3,8 @@
     import * as topojson from "topojson-client";
     import { scaleQuantize } from "d3-scale";
     import { schemeBlues } from "d3-scale-chromatic";
-    export let data;
+    import { onMount } from "svelte";
+    //export let data;
 
     const width = 928;
     const height = 600;
@@ -12,6 +13,15 @@
     const marginBottom = 30;
     const marginLeft = 40;
 
+    let data = [];
+    onMount(async () => {
+    try {
+        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/internet_usage.csv');
+        data = csvData;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
     let svg;
     const projection = d3.geoEqualEarth().fitExtent([[2, marginTop + 2], [width - 2, height]], {type: "Sphere"});
     const path = d3.geoPath(projection);
@@ -46,12 +56,12 @@
     >
 
     <path d = {path(outline)} fill = "#fff" />
-    <path d = {path(land)} fill = "#000" /> <!-- Map this to the percentage values-->
-    <!--<g class = "data"> -->
-        <!-- {#each countries as country} -->
-​           <!-- <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} /> -->
-​        <!--{/each} -->
-    <!--</g>-->
+    <!-- <path d = {path(land)} fill = "#000" /> --><!-- Map this to the percentage values-->
+    <g class = "data"> 
+        {#each countries as country} 
+​           <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} /> 
+​        {/each} 
+    </g>
     <path d = {path(border)} fill = "none" stroke = "#fff" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
