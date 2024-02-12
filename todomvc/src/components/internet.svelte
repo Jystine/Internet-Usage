@@ -20,7 +20,7 @@
     let border;
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
-    const valuemap = new Map(data.map(d => [d.Region, d.Percentage]));
+    let valuemap = new Map(data.map(d => [d.Region, d.Percentage]));
     //const valuemap = d3.map(data, d => d.Region);
 
     d3.json(
@@ -31,8 +31,9 @@
         countries = topojson.feature(world, world.objects.countries).features;
     });
 
-    $: console.log(countries);
     $: console.log(data);
+    $: console.log(countries);
+    $: console.log(valuemap);
 </script>
 
 <div class = "internet-plot">
@@ -45,12 +46,12 @@
     >
 
     <path d = {path(outline)} fill = "#fff" />
-    <!-- <path d = {path(land)} fill = "#000" /> --> <!-- Map this to the percentage values-->
-    <g class = "data">
-        {#each countries as country}
-​           <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} />
-​        {/each}
-    </g>
+    <path d = {path(land)} fill = "#000" /> <!-- Map this to the percentage values-->
+    <!--<g class = "data"> -->
+        <!-- {#each countries as country} -->
+​           <!-- <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} /> -->
+​        <!--{/each} -->
+    <!--</g>-->
     <path d = {path(border)} fill = "none" stroke = "#fff" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
