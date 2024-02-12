@@ -16,7 +16,7 @@
     let data = [];
     onMount(async () => {
     try {
-        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/internet_usage.csv');
+        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/cleaned_internet.csv');
         data = csvData;
     } catch (error) {
         console.error('Error fetching data:', error);

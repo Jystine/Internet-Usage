@@ -6,7 +6,7 @@
     let data = [];
     onMount(
         async() => {
-            data = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/internet_usage.csv').then(function (d) {
+            data = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/cleaned_internet.csv').then(function (d) {
                 data = d;
             });
         }
