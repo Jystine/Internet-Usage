@@ -34,7 +34,7 @@
     //const valuemap = d3.map(data, d => d.Region);
 
     d3.json(
-        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
     ).then((world) => {
         land = topojson.feature(world, world.objects.land);
         border = topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
@@ -56,12 +56,12 @@
     >
 
     <path d = {path(outline)} fill = "#fff" />
-    <!-- <path d = {path(land)} fill = "#000" /> --><!-- Map this to the percentage values-->
-    <g class = "data"> 
+    <path d = {path(land)} fill = "#000" /><!-- Map this to the percentage values-->
+    <!-- <g class = "data"> 
         {#each countries as country} 
 ​           <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} /> 
 ​        {/each} 
-    </g>
+    </g> -->
     <path d = {path(border)} fill = "none" stroke = "#fff" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
