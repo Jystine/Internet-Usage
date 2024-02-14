@@ -16,7 +16,7 @@
     let data = [];
     onMount(async () => {
     try {
-        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/cleaned_internet.csv');
+        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/only_2020.csv');
         data = csvData;
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -30,7 +30,11 @@
     let border;
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
-    let valuemap = new Map(data.map(d => [d.Region, d.Percentage]));
+    let valuemap = {};
+    //valuemap = d3.rollup(data, v => data.Percentage, d => data.ISO_num);
+    const color = d3
+    .scaleSequential()
+    .interpolator(d3.interpolateBuGn)
     //const valuemap = d3.map(data, d => d.Region);
 
     d3.json(
@@ -40,6 +44,11 @@
         border = topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
         countries = topojson.feature(world, world.objects.countries).features;
     });
+
+    for (let i = 0; i < data.length; i++) {
+        valuemap[data[i].ISO_num] = {Percentage: data[0].Percentage};
+        console.log(data[i]);
+    }
 
     $: console.log(data);
     $: console.log(countries);
@@ -56,12 +65,12 @@
     >
 
     <path d = {path(outline)} fill = "#fff" />
-    <path d = {path(land)} fill = "#000" /><!-- Map this to the percentage values-->
-    <!-- <g class = "data"> 
+    <!-- <path d = {path(land)} fill = "#000" />Map this to the percentage values -->
+    <g class = "data"> 
         {#each countries as country} 
-​           <path d = {path(land)} fill={colorScale(valuemap.get(country.properties.name))} /> 
+​           <path d = {path(country)} fill={color(country)} /> 
 ​        {/each} 
-    </g> -->
+    </g>
     <path d = {path(border)} fill = "none" stroke = "#fff" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
