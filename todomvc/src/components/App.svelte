@@ -4,13 +4,13 @@
     import Internet from "./internet.svelte";
 
     let data = [];
-    onMount(
-        async() => {
-            data = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/cleaned_internet.csv').then(function (d) {
-                data = d;
-            });
-        }
-    )
+
+ onMount(async () => {
+            const res = await fetch('only_2020.csv'); 
+            const csv = await res.text();
+            data = d3.csvParse(csv, d3.autoType)
+            console.log(data);
+        });
 
 </script>
 

@@ -4,7 +4,7 @@
     import { scaleQuantize } from "d3-scale";
     import { schemeBlues } from "d3-scale-chromatic";
     import { onMount } from "svelte";
-    //export let data;
+    export let data
 
     const width = 928;
     const height = 600;
@@ -13,15 +13,6 @@
     const marginBottom = 30;
     const marginLeft = 40;
 
-    let data = [];
-    onMount(async () => {
-    try {
-        const csvData = await d3.csv('https://raw.githubusercontent.com/Jystine/Internet-Usage/main/data/only_2020.csv');
-        data = csvData;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
     let svg;
     const projection = d3.geoEqualEarth().fitExtent([[2, marginTop + 2], [width - 2, height]], {type: "Sphere"});
     const path = d3.geoPath(projection);
@@ -31,28 +22,28 @@
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
     let valuemap = {};
-    //valuemap = d3.rollup(data, v => data.Percentage, d => data.ISO_num);
     const color = d3
     .scaleSequential()
+    .domain([0, 100])
     .interpolator(d3.interpolateBuGn)
-    //const valuemap = d3.map(data, d => d.Region);
 
     d3.json(
         "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
     ).then((world) => {
         land = topojson.feature(world, world.objects.land);
         border = topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
-        countries = topojson.feature(world, world.objects.countries).features;
+        countries = topojson.feature(world, world.objects.countries);
     });
 
     for (let i = 0; i < data.length; i++) {
-        valuemap[data[i].ISO_num] = {Percentage: data[0].Percentage};
-        console.log(data[i]);
+        console.log(data[0]);
+        valuemap[data[i].ISO_num] = {Percentage: data[i].Percentage};
     }
 
     $: console.log(data);
     $: console.log(countries);
     $: console.log(valuemap);
+    $: console.log(land);
 </script>
 
 <div class = "internet-plot">
@@ -67,9 +58,17 @@
     <path d = {path(outline)} fill = "#fff" />
     <!-- <path d = {path(land)} fill = "#000" />Map this to the percentage values -->
     <g class = "data"> 
-        {#each countries as country} 
-​           <path d = {path(country)} fill={color(country)} /> 
-​        {/each} 
+        {#if countries.features !== undefined}
+            {#each countries.features as country} 
+                {#if (country.id !== undefined && valuemap[Number(country.id)] !== undefined)} 
+                    {#if (Number(country.id) in valuemap)}
+        ​               <path d = {path(country)} fill={color(valuemap[Number(country.id)].Percentage)} /> 
+                    {:else}
+                        <path d = {path(country)} fill= "#000" />
+                    {/if}
+                {/if}
+    ​        {/each} 
+        {/if}
     </g>
     <path d = {path(border)} fill = "none" stroke = "#fff" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
