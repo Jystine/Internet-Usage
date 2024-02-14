@@ -14,7 +14,7 @@
     const marginLeft = 40;
 
     let svg;
-    const projection = d3.geoEqualEarth().fitExtent([[2, marginTop + 2], [width - 2, height]], {type: "Sphere"});
+    const projection = d3.geoEquirectangular().fitExtent([[2, marginTop + 2], [width - 2, height]], {type: "Sphere"});
     const path = d3.geoPath(projection);
     let outline = ({type: "Sphere"});
     let land;
@@ -25,7 +25,7 @@
     const color = d3
     .scaleSequential()
     .domain([0, 100])
-    .interpolator(d3.interpolateBuGn)
+    .interpolator(d3.interpolateYlGnBu)
 
     d3.json(
         "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
@@ -36,7 +36,7 @@
     });
 
     for (let i = 0; i < data.length; i++) {
-        console.log(data[0]);
+        console.log(data[i]);
         valuemap[data[i].ISO_num] = {Percentage: data[i].Percentage};
     }
 
@@ -60,17 +60,17 @@
     <g class = "data"> 
         {#if countries.features !== undefined}
             {#each countries.features as country} 
-                {#if (country.id !== undefined && valuemap[Number(country.id)] !== undefined)} 
+                {#if (country.id !== undefined || valuemap[Number(country.id)] !== undefined)} 
                     {#if (Number(country.id) in valuemap)}
-        ​               <path d = {path(country)} fill={color(valuemap[Number(country.id)].Percentage)} /> 
-                    {:else}
-                        <path d = {path(country)} fill= "#000" />
+        ​               <path d = {path(country)} stroke = "#000" fill={color(valuemap[Number(country.id)].Percentage)} /> 
+                {:else}
+                    <path d = {path(country)} stroke = "#000" fill= "#808080" />
                     {/if}
                 {/if}
     ​        {/each} 
         {/if}
     </g>
-    <path d = {path(border)} fill = "none" stroke = "#fff" />
+    <path d = {path(border)} fill = "none" stroke = "#000" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
     </svg>
