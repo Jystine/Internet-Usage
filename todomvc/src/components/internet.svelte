@@ -20,13 +20,14 @@
     let border;
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
+    const years = ['2000', '2005', '2010', '2015', '2019', '2020', '2021'];
     $: valuemap = getYear(data, chosenYear);
-    let slider_label = '';
+    let slider_label = 'Year';
     let chosenYear = '2000';
     const color = d3
     .scaleSequential()
     .domain([0, 100])
-    .interpolator(d3.interpolateYlGnBu)
+    .interpolator(d3.interpolateBuGn)
     
 
     d3.json(
@@ -40,7 +41,7 @@
     function getYear(data, chosenYear) {
         let valuemap = {}
         let dataYear = data.filter(function(d) {
-            return d.Year == chosenYear
+            return d.Year == years[chosenYear]
         });
         for (let i = 0; i < dataYear.length; i++) {
             valuemap[dataYear[i].ISO_num] = {Percentage: dataYear[i].Percentage};
@@ -54,7 +55,7 @@
     // $: console.log(countries);
     // $: console.log(valuemap);
     // $: console.log(dataYear);
-    $: console.log(chosenYear);
+    $: console.log(years[chosenYear]);
 </script>
 
 <div class = "internet-plot">
@@ -92,8 +93,18 @@
     <input
         id = "slider"
         type = "range"
-        min = "2000"
-        max = "2021"
+        min = "0"
+        max = "6"
+        list = "steplist"
         bind:value = {chosenYear}
     />
+    <datalist id = "steplist">
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+    </datalist>
 </div>
