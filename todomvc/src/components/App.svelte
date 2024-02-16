@@ -6,7 +6,7 @@
     let data = [];
 
  onMount(async () => {
-            const res = await fetch('only_2020.csv'); 
+            const res = await fetch('cleaned_internet.csv'); 
             const csv = await res.text();
             data = d3.csvParse(csv, d3.autoType)
             console.log(data);

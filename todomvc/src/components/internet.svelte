@@ -3,7 +3,6 @@
     import * as topojson from "topojson-client";
     import { scaleQuantize } from "d3-scale";
     import { schemeBlues } from "d3-scale-chromatic";
-    import { onMount } from "svelte";
     export let data
 
     const width = 928;
@@ -21,11 +20,14 @@
     let border;
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
-    let valuemap = {};
+    $: valuemap = getYear(data, chosenYear);
+    let slider_label = '';
+    let chosenYear = '2000';
     const color = d3
     .scaleSequential()
     .domain([0, 100])
     .interpolator(d3.interpolateYlGnBu)
+    
 
     d3.json(
         "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
@@ -35,15 +37,24 @@
         countries = topojson.feature(world, world.objects.countries);
     });
 
-    for (let i = 0; i < data.length; i++) {
-        console.log(data[i]);
-        valuemap[data[i].ISO_num] = {Percentage: data[i].Percentage};
+    function getYear(data, chosenYear) {
+        let valuemap = {}
+        let dataYear = data.filter(function(d) {
+            return d.Year == chosenYear
+        });
+        for (let i = 0; i < dataYear.length; i++) {
+            valuemap[dataYear[i].ISO_num] = {Percentage: dataYear[i].Percentage};
+        }
+        return valuemap
     }
 
-    $: console.log(data);
-    $: console.log(countries);
-    $: console.log(valuemap);
-    $: console.log(land);
+    // $: console.log(filterYear("2021"))
+ 
+    // $: console.log(data);
+    // $: console.log(countries);
+    // $: console.log(valuemap);
+    // $: console.log(dataYear);
+    $: console.log(chosenYear);
 </script>
 
 <div class = "internet-plot">
@@ -74,4 +85,15 @@
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
     </svg>
+</div>
+
+<div class = "overlay">
+    <label>{slider_label}</label>
+    <input
+        id = "slider"
+        type = "range"
+        min = "2000"
+        max = "2021"
+        bind:value = {chosenYear}
+    />
 </div>
