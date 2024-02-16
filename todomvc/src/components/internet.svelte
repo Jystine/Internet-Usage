@@ -3,6 +3,7 @@
     import * as topojson from "topojson-client";
     import { scaleQuantize } from "d3-scale";
     import { schemeBlues } from "d3-scale-chromatic";
+    import RangeSlider from "svelte-range-slider-pips";
     export let data
 
     const width = 928;
@@ -20,10 +21,11 @@
     let border;
     let countries = [];
     const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
-    const years = ['2000', '2005', '2010', '2015', '2019', '2020', '2021'];
+
+    const years = ['2000', '2005', '2010', '2015', '2020'];
     $: valuemap = getYear(data, chosenYear);
     let slider_label = 'Year';
-    let chosenYear = '2000';
+    let chosenYear = '4';
     const color = d3
     .scaleSequential()
     .domain([0, 100])
@@ -84,11 +86,26 @@
     </g>
     <path d = {path(border)} fill = "none" stroke = "#000" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
-
     </svg>
 </div>
 
-<div class = "overlay">
+<div class = "slider">
+    <label>{slider_label}</label>
+    <RangeSlider 
+    formatter = {v => years[v]}
+    min = 0 
+    max = 4
+    float = true 
+    all = 'label' 
+    ariaLabels = {["2000", '2005', '2010', '2015', '2020']}
+    on:change = {(e) => {
+        chosenYear = e.detail.value
+    }}
+    pips = true />
+
+</div>
+
+<!-- <div class = "overlay">
     <label>{slider_label}</label>
     <input
         id = "slider"
@@ -99,12 +116,21 @@
         bind:value = {chosenYear}
     />
     <datalist id = "steplist">
-        <option>0</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
+        <option value = 0 class = "sliderlabel" label = "2000"></option>
+        <option value = 1 class = "sliderlabel" label = "2005"></option>
+        <option value = 2 class = "sliderlabel" label = "2010"></option>
+        <option value = 3 class = "sliderlabel" label = "2015"></option>
+        <option value = 4 class = "sliderlabel" label = "2019"></option>
+        <option value = 5 class = "sliderlabel" label = "2020"></option>
+        <option value = 6 class = "sliderlabel" label = "2021"></option>
     </datalist>
-</div>
+</div> !-->
+
+<style>
+    .slider {
+        margin: auto;
+        top: 50%;
+        transform: translate(0, -50%);
+        width: 50%;
+    }
+</style>
