@@ -107,6 +107,7 @@
       {height}
       viewBox = "0 0 {width} {height}"
       style = "max-width: 100%; height: auto;"
+      overflow = "visible"
     >
 
     <path d = {path(outline)} fill = "#fff" />
@@ -126,6 +127,18 @@
     </g>
     <path d = {path(border)} fill = "none" stroke = "#000" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
+
+    <g class = "legend" stroke = "#000">
+        <text x = "1000" y = "70">Legend</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 100px
+        fill = "#eff3ff"
+        r = "8"
+        />
+        <text x = "1020" y = "105"> 0 - 20</text>
+    </g>
     <!-- <div class = "legend">
         svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
     </div> -->
@@ -146,18 +159,6 @@
     }}
     pips = true />
 
-</div>
-
-<div class = "legend">
-    <g stroke = "#000">
-        <circle
-        key = 1
-        cx = 1000px
-        cy = 100px
-        fill = "000"
-        r = "8"
-        />
-    </g>
 </div>
 
 <!-- <div class = "overlay">
