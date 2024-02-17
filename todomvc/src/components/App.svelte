@@ -15,7 +15,7 @@
 </script>
 
 <main>
-  <h1>Internet Usage</h1>
+  <h1>Internet Usage Overtime</h1>
   <Internet {data} />
 </main>
 

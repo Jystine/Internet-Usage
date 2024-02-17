@@ -51,6 +51,46 @@
         return valuemap
     }
 
+    function colorBin(percentage){
+        if (percentage >= 0 && percentage < 10) {
+            return "#f7fbff"
+        } else if (percentage >= 10 && percentage < 20) {
+            return "#deebf7"
+        } else if (percentage >= 20 && percentage < 30) {
+            return "#c6dbef"
+        } else if (percentage >= 30 && percentage < 40) {
+            return "#9ecae1"
+        } else if (percentage >= 40 && percentage < 50) {
+            return "#6baed6"
+        } else if (percentage >= 50 && percentage < 60) {
+            return "#4292c6"
+        } else if (percentage >= 60 && percentage < 70) {
+            return "#2171b5"
+        } else if (percentage >= 70 && percentage < 80) {
+            return "#08519c"
+        } else if (percentage >= 80 && percentage < 90) {
+            return "#08306b"
+        } else if (percentage >= 90 && percentage < 100) {
+            return "#071630"
+        }
+    }
+
+    
+    function colorBin2(percentage){
+        if (percentage >= 0 && percentage < 20) {
+            return "#eff3ff"
+        } else if (percentage >= 20 && percentage < 40) {
+            return "#bdd7e7"
+        } else if (percentage >= 40 && percentage < 60) {
+            return "#6baed6"
+        } else if (percentage >= 60 && percentage < 80) {
+            return "#3182bd"
+        } else if (percentage >= 80 && percentage < 100) {
+            return "#08519c"
+        }
+    }
+
+
     // $: console.log(filterYear("2021"))
  
     // $: console.log(data);
@@ -76,7 +116,7 @@
             {#each countries.features as country} 
                 {#if (country.id !== undefined || valuemap[Number(country.id)] !== undefined)} 
                     {#if (Number(country.id) in valuemap)}
-        ​               <path d = {path(country)} stroke = "#000" fill={color(valuemap[Number(country.id)].Percentage)} /> 
+        ​               <path d = {path(country)} stroke = "#000" fill={colorBin2(valuemap[Number(country.id)].Percentage)} /> 
                 {:else}
                     <path d = {path(country)} stroke = "#000" fill= "#808080" />
                     {/if}
@@ -86,6 +126,9 @@
     </g>
     <path d = {path(border)} fill = "none" stroke = "#000" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
+    <!-- <div class = "legend">
+        svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+    </div> -->
     </svg>
 </div>
 
@@ -103,6 +146,18 @@
     }}
     pips = true />
 
+</div>
+
+<div class = "legend">
+    <g stroke = "#000">
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 100px
+        fill = "000"
+        r = "8"
+        />
+    </g>
 </div>
 
 <!-- <div class = "overlay">
