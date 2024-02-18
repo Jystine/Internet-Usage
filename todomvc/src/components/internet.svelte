@@ -96,7 +96,10 @@
     // const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
 
     const years = ['2000', '2005', '2010', '2015', '2020'];
+    let filterPercentage = [];
+    let everFiltered = false;
     $: valuemap = getYear(data, chosenYear);
+    $: subset = filterBins(valuemap, filterPercentage)
     let slider_label = 'Year';
     let chosenYear = '4';
     const color = d3
@@ -124,31 +127,29 @@
         return valuemap
     }
 
-    // function colorBin(percentage){
-    //     if (percentage >= 0 && percentage < 10) {
-    //         return "#f7fbff"
-    //     } else if (percentage >= 10 && percentage < 20) {
-    //         return "#deebf7"
-    //     } else if (percentage >= 20 && percentage < 30) {
-    //         return "#c6dbef"
-    //     } else if (percentage >= 30 && percentage < 40) {
-    //         return "#9ecae1"
-    //     } else if (percentage >= 40 && percentage < 50) {
-    //         return "#6baed6"
-    //     } else if (percentage >= 50 && percentage < 60) {
-    //         return "#4292c6"
-    //     } else if (percentage >= 60 && percentage < 70) {
-    //         return "#2171b5"
-    //     } else if (percentage >= 70 && percentage < 80) {
-    //         return "#08519c"
-    //     } else if (percentage >= 80 && percentage < 90) {
-    //         return "#08306b"
-    //     } else if (percentage >= 90 && percentage < 100) {
-    //         return "#071630"
-    //     }
-    // }
+    function trackPercent(filterPercentage, min, max){
+        if (filterPercentage.includes(min) === false && filterPercentage.includes(max) === false) {
+            filterPercentage.push(min)
+            filterPercentage.push(max)
+        } else if (filterPercentage.includes(min) && filterPercentage.includes(max)) {
+            delete filterPercentage[filterPercentage.indexOf(min)]
+            delete filterPercentage[filterPercentage.indexOf(max)]
+        }
+        return filterPercentage
+    }
 
-    
+    function filterBins(valuemap, min = 0, max = 100) {
+        let subset = {}
+        for (const key in valuemap) {
+            if (valuemap[key].Percentage >= min && valuemap[key].Percentage < max) {
+                subset[key] = {Percentage: valuemap[key].Percentage, Region: valuemap[key].Region};
+            }
+        }
+        return subset
+    }
+
+    let resetColor = "#000"
+
     function colorBin2(percentage){
         if (percentage >= 0 && percentage < 20) {
             return "#eff3ff"
@@ -164,7 +165,7 @@
     }
 
 
-    // $: console.log(filterYear("2021"))
+    $: console.log(filterPercentage);
  
     // $: console.log(data);
      $: console.log(countries);
@@ -187,9 +188,9 @@
     <g class = "data"> 
         {#if countries.features !== undefined}
             {#each countries.features as country} 
-                {#if (country.id !== undefined || valuemap[Number(country.id)] !== undefined)} 
-                    {#if (Number(country.id) in valuemap)}
-        ​               <path d = {path(country)} stroke = "#000" fill={colorBin2(valuemap[Number(country.id)].Percentage)} /> 
+                {#if (country.id !== undefined || subset[Number(country.id)] !== undefined)} 
+                    {#if (Number(country.id) in subset)}
+        ​               <path d = {path(country)} stroke = "#000" fill={colorBin2(subset[Number(country.id)].Percentage)} /> 
                 {:else}
                     <path d = {path(country)} stroke = "#000" fill= "#808080" />
                     {/if}
@@ -208,6 +209,9 @@
         cy = 100px
         fill = "#eff3ff"
         r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 0, 20)}}
+        on:mouseenter = {() => {
+        }}
         />
         <text x = "1020" y = "105"> 0 - 20</text>
         <circle
@@ -216,6 +220,7 @@
         cy = 130px
         fill = "#bdd7e7"
         r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 20, 40)}}
         />
         <text x = "1020" y = "135"> 20 - 40</text>
         <circle
@@ -224,14 +229,16 @@
         cy = 160px
         fill = "#6baed6"
         r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 40, 60)}}
         />
-        <text x = "1020" y = "165"> 40 - 60</text>
+        <text x = "1020" y = "165" > 40 - 60</text>
         <circle
         key = 1
         cx = 1000px
         cy = 190px
         fill = "#3182bd"
         r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 60, 80)}}
         />
         <text x = "1020" y = "195"> 60 - 80</text>
         <circle
@@ -240,6 +247,7 @@
         cy = 220px
         fill = "#08519c"
         r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 80, 100)}}
         />
         <text x = "1020" y = "225"> 80 - 100</text>
         <circle
@@ -250,6 +258,26 @@
         r = "8"
         />
         <text x = "1020" y = "255"> No data available</text>
+        <!-- <circle
+        key = 1
+        cx = 1000px
+        cy = 280px
+        fill = "#fff"
+        r = "8"
+        on:click = {() => {subset = filterBins(valuemap, 0, 100)}}
+        /> -->
+        <text 
+        x = "1020" 
+        y = "285" 
+        fill = {resetColor}
+        on:mouseover = {function(e) {
+            resetColor = "white"
+        }}
+        on:mouseout = {function(e) {
+            resetColor = "#000"
+        }}
+        on:click = {() => {subset = filterBins(valuemap, 0, 100)}} 
+        style="border-width:3px; border-style:solid; border-color:#FF0000; padding: 1em;"> Reset Filter</text>
     </g>
     </svg>
 </div>
@@ -270,32 +298,14 @@
 
 </div>
 
-<!-- <div class = "overlay">
-    <label>{slider_label}</label>
-    <input
-        id = "slider"
-        type = "range"
-        min = "0"
-        max = "6"
-        list = "steplist"
-        bind:value = {chosenYear}
-    />
-    <datalist id = "steplist">
-        <option value = 0 class = "sliderlabel" label = "2000"></option>
-        <option value = 1 class = "sliderlabel" label = "2005"></option>
-        <option value = 2 class = "sliderlabel" label = "2010"></option>
-        <option value = 3 class = "sliderlabel" label = "2015"></option>
-        <option value = 4 class = "sliderlabel" label = "2019"></option>
-        <option value = 5 class = "sliderlabel" label = "2020"></option>
-        <option value = 6 class = "sliderlabel" label = "2021"></option>
-    </datalist>
-</div> !-->
-
 <style>
     .slider {
         margin: auto;
         top: 50%;
         transform: translate(0, -50%);
         width: 50%;
+    }
+    .cursor{
+    cursor:url(http://www.icon100.com/up/3772/128/425-hand-pointer.png), auto;
     }
 </style>
