@@ -20,7 +20,7 @@
     let land;
     let border;
     let countries = [];
-    const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
+    // const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
 
     const years = ['2000', '2005', '2010', '2015', '2020'];
     $: valuemap = getYear(data, chosenYear);
@@ -129,7 +129,7 @@
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
     <g class = "legend" stroke = "#000">
-        <text x = "1000" y = "70">Legend</text>
+        <text x = "1000" y = "70">Percentage Bins</text>
         <circle
         key = 1
         cx = 1000px
@@ -138,10 +138,47 @@
         r = "8"
         />
         <text x = "1020" y = "105"> 0 - 20</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 130px
+        fill = "#bdd7e7"
+        r = "8"
+        />
+        <text x = "1020" y = "135"> 20 - 40</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 160px
+        fill = "#6baed6"
+        r = "8"
+        />
+        <text x = "1020" y = "165"> 40 - 60</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 190px
+        fill = "#3182bd"
+        r = "8"
+        />
+        <text x = "1020" y = "195"> 60 - 80</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 220px
+        fill = "#08519c"
+        r = "8"
+        />
+        <text x = "1020" y = "225"> 80 - 100</text>
+        <circle
+        key = 1
+        cx = 1000px
+        cy = 250px
+        fill = "#808080"
+        r = "8"
+        />
+        <text x = "1020" y = "255"> No data available</text>
     </g>
-    <!-- <div class = "legend">
-        svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
-    </div> -->
     </svg>
 </div>
 
