@@ -20,6 +20,79 @@
     let land;
     let border;
     let countries = [];
+
+    let tooltipPt = null;
+    function onPointerMove(event) {
+        var index = d3.select(valuemap).attr('Region')
+        // const i = d3.bisect(data, countries.invert(d3.pointer(event)[0]))
+        // tooltipPt = data[i]
+    }
+
+    $: d3.select(svg).selectChild("g")
+    .on('mouseover', function (d, i) {
+          d3.select(this).transition()
+               .duration('50')
+               .attr('opacity', '.85'); })
+     .on('mouseout', function (d, i) {
+          d3.select(this).transition()
+               .duration('50')
+               .attr('opacity', '1');})
+
+//     var tooltip = d3.select("internet-plot")
+//     .append("div")
+//     .style("opacity", 0)
+//     .attr("class", "tooltip")
+//     .style("background-color", "white")
+//     .style("border", "solid")
+//     .style("border-width", "2px")
+//     .style("border-radius", "5px")
+//     .style("padding", "5px")
+//     var mouseover = function(d) {
+//     tooltip
+//       .style("opacity", 1)
+//     d3.select(this)
+//       .style("stroke", "black")
+//       .style("opacity", 1)
+//     }
+//     var mousemove = function(d) {
+//     tooltip
+//       .html("The exact value of<br>this cell is: " + 10)
+//       .style("left", (d3.pointer(event)[0]+70) + "px")
+//       .style("top", (d3.pointer(event)[1]) + "px")
+//   }
+//     var mouseleave = function(d) {
+//     d3.selectAll(".Country")
+//       .transition()
+//       .duration(200)
+//       .style("opacity", .8)
+//     d3.select(this)
+//       .transition()
+//       .duration(200)
+//       .style("stroke", "transparent")
+//   }
+//     $: d3.select(svg)
+//     .on("mouseover", mouseover)
+//     .on("mousemove", mousemove)
+//     .on("mouseleave", mouseleave)
+
+
+
+    // $: d3.select(svg)
+    // .on('mouseover', function(d){
+    //   var index = d3.select(this).attr(Object.keys(valuemap));
+    //   var percentage = d3.select(this).attr('Percentage');
+    //   var region = d3.select(this).attr('Region');
+    //   console.log(index)
+    //   //var county = index == -1 ? 'unknown' : eduData[index].area_name;
+    //   var tooltip = d3.select('#tooltip')
+    //   //.style('left', d3.event.pageX + 10 + 'px')
+    //   //.style('top', d3.event.pageY + 10 + 'px')
+    //   //.style('display', 'block')
+    //   .attr('data-education', percentage)
+    //   .html(`${region}: ${percentage}`)
+    // })
+    // .on('mouseout', ()=>d3.select('#tooltip').style('display', 'none'));
+
     // const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
 
     const years = ['2000', '2005', '2010', '2015', '2020'];
@@ -46,34 +119,34 @@
             return d.Year == years[chosenYear]
         });
         for (let i = 0; i < dataYear.length; i++) {
-            valuemap[dataYear[i].ISO_num] = {Percentage: dataYear[i].Percentage};
+            valuemap[dataYear[i].ISO_num] = {Percentage: dataYear[i].Percentage, Region: dataYear[i].Region};
         }
         return valuemap
     }
 
-    function colorBin(percentage){
-        if (percentage >= 0 && percentage < 10) {
-            return "#f7fbff"
-        } else if (percentage >= 10 && percentage < 20) {
-            return "#deebf7"
-        } else if (percentage >= 20 && percentage < 30) {
-            return "#c6dbef"
-        } else if (percentage >= 30 && percentage < 40) {
-            return "#9ecae1"
-        } else if (percentage >= 40 && percentage < 50) {
-            return "#6baed6"
-        } else if (percentage >= 50 && percentage < 60) {
-            return "#4292c6"
-        } else if (percentage >= 60 && percentage < 70) {
-            return "#2171b5"
-        } else if (percentage >= 70 && percentage < 80) {
-            return "#08519c"
-        } else if (percentage >= 80 && percentage < 90) {
-            return "#08306b"
-        } else if (percentage >= 90 && percentage < 100) {
-            return "#071630"
-        }
-    }
+    // function colorBin(percentage){
+    //     if (percentage >= 0 && percentage < 10) {
+    //         return "#f7fbff"
+    //     } else if (percentage >= 10 && percentage < 20) {
+    //         return "#deebf7"
+    //     } else if (percentage >= 20 && percentage < 30) {
+    //         return "#c6dbef"
+    //     } else if (percentage >= 30 && percentage < 40) {
+    //         return "#9ecae1"
+    //     } else if (percentage >= 40 && percentage < 50) {
+    //         return "#6baed6"
+    //     } else if (percentage >= 50 && percentage < 60) {
+    //         return "#4292c6"
+    //     } else if (percentage >= 60 && percentage < 70) {
+    //         return "#2171b5"
+    //     } else if (percentage >= 70 && percentage < 80) {
+    //         return "#08519c"
+    //     } else if (percentage >= 80 && percentage < 90) {
+    //         return "#08306b"
+    //     } else if (percentage >= 90 && percentage < 100) {
+    //         return "#071630"
+    //     }
+    // }
 
     
     function colorBin2(percentage){
@@ -94,8 +167,8 @@
     // $: console.log(filterYear("2021"))
  
     // $: console.log(data);
-    // $: console.log(countries);
-    // $: console.log(valuemap);
+     $: console.log(countries);
+     $: console.log(valuemap);
     // $: console.log(dataYear);
     $: console.log(years[chosenYear]);
 </script>
@@ -111,7 +184,6 @@
     >
 
     <path d = {path(outline)} fill = "#fff" />
-    <!-- <path d = {path(land)} fill = "#000" />Map this to the percentage values -->
     <g class = "data"> 
         {#if countries.features !== undefined}
             {#each countries.features as country} 
