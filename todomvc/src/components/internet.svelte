@@ -276,6 +276,7 @@
     float = true 
     all = 'label' 
     ariaLabels = {["2000", '2005', '2010', '2015', '2020']}
+    springValues={{ stiffness: 0.25, damping: 0.8 }}
     on:change = {(e) => {
         chosenYear = e.detail.value
         valuemap = getYear(data, chosenYear)
