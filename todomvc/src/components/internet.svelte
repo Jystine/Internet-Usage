@@ -1,13 +1,11 @@
 <script>
     import * as d3 from "d3";
     import * as topojson from "topojson-client";
-    import { scaleQuantize } from "d3-scale";
-    import { schemeBlues } from "d3-scale-chromatic";
     import RangeSlider from "svelte-range-slider-pips";
     export let data
 
     const width = 928;
-    const height = 600;
+    const height = 500;
     const marginTop = 20;
     const marginRight = 30;
     const marginBottom = 30;
@@ -21,22 +19,22 @@
     let border;
     let countries = [];
 
-    let tooltipPt = null;
-    function onPointerMove(event) {
-        var index = d3.select(valuemap).attr('Region')
-        // const i = d3.bisect(data, countries.invert(d3.pointer(event)[0]))
-        // tooltipPt = data[i]
-    }
+    // let tooltipPt = null;
+    // function onPointerMove(event) {
+    //     var index = d3.select(valuemap).attr('Region')
+    //     // const i = d3.bisect(data, countries.invert(d3.pointer(event)[0]))
+    //     // tooltipPt = data[i]
+    // }
 
-    $: d3.select(svg).selectChild("g")
-    .on('mouseover', function (d, i) {
-          d3.select(this).transition()
-               .duration('50')
-               .attr('opacity', '.85'); })
-     .on('mouseout', function (d, i) {
-          d3.select(this).transition()
-               .duration('50')
-               .attr('opacity', '1');})
+    // $: d3.select(svg).selectChild("g")
+    // .on('mouseover', function (d, i) {
+    //       d3.select(this).transition()
+    //            .duration('50')
+    //            .attr('opacity', '.85'); })
+    //  .on('mouseout', function (d, i) {
+    //       d3.select(this).transition()
+    //            .duration('50')
+    //            .attr('opacity', '1');})
 
 //     var tooltip = d3.select("internet-plot")
 //     .append("div")
@@ -98,8 +96,9 @@
     const years = ['2000', '2005', '2010', '2015', '2020'];
     let filterPercentage = [];
     let everFiltered = false;
+    let minMax = [0, 100];
     $: valuemap = getYear(data, chosenYear);
-    $: subset = filterBins(valuemap, filterPercentage)
+    $: subset = filterBins(valuemap, minMax[0], minMax[1])
     let slider_label = 'Year';
     let chosenYear = '4';
     const color = d3
@@ -149,6 +148,11 @@
     }
 
     let resetColor = "#000"
+    let bin1Color = "#eff3ff"
+    let bin2Color = "#bdd7e7"
+    let bin3Color = "#6baed6"
+    let bin4Color = "#3182bd"
+    let bin5Color = "#08519c"
 
     function colorBin2(percentage){
         if (percentage >= 0 && percentage < 20) {
@@ -163,15 +167,6 @@
             return "#08519c"
         }
     }
-
-
-    $: console.log(filterPercentage);
- 
-    // $: console.log(data);
-     $: console.log(countries);
-     $: console.log(valuemap);
-    // $: console.log(dataYear);
-    $: console.log(years[chosenYear]);
 </script>
 
 <div class = "internet-plot">
@@ -202,88 +197,83 @@
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
     <g class = "legend" stroke = "#000">
-        <text x = "1000" y = "70">Percentage Bins</text>
+        <text x = "990" y = "70" style = "font-size: 22" font-weight = bold>Percentage Bins</text>
         <circle
         key = 1
         cx = 1000px
         cy = 100px
         fill = "#eff3ff"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 0, 20)}}
+        r = "15"
+        on:click = {() => {subset = filterBins(valuemap, 0, 20), minMax = [0, 20]}}
         on:mouseenter = {() => {
         }}
         />
-        <text x = "1020" y = "105"> 0 - 20</text>
+        <text x = "1030" y = "107" style = "font-size: 22"> 0 - 20</text>
         <circle
         key = 1
         cx = 1000px
-        cy = 130px
+        cy = 140px
         fill = "#bdd7e7"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 20, 40)}}
+        r = "15"
+        on:click = {() => {subset = filterBins(valuemap, 20, 40), minMax = [20, 40]}}
+        style = "hover = cursor:pointer"
         />
-        <text x = "1020" y = "135"> 20 - 40</text>
+        <text x = "1030" y = "147" style = "font-size: 22"> 20 - 40</text>
         <circle
         key = 1
         cx = 1000px
-        cy = 160px
+        cy = 180px
         fill = "#6baed6"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 40, 60)}}
+        r = "15"
+        on:click = {() => {subset = filterBins(valuemap, 40, 60), minMax = [40, 60]}}
         />
-        <text x = "1020" y = "165" > 40 - 60</text>
-        <circle
-        key = 1
-        cx = 1000px
-        cy = 190px
-        fill = "#3182bd"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 60, 80)}}
-        />
-        <text x = "1020" y = "195"> 60 - 80</text>
+        <text x = "1030" y = "187" style = "font-size: 22"> 40 - 60</text>
         <circle
         key = 1
         cx = 1000px
         cy = 220px
-        fill = "#08519c"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 80, 100)}}
+        fill = "#3182bd"
+        r = "15"
+        on:click = {() => {subset = filterBins(valuemap, 60, 80), minMax = [60, 80]}}
         />
-        <text x = "1020" y = "225"> 80 - 100</text>
+        <text x = "1030" y = "227" style = "font-size: 22"> 60 - 80</text>
         <circle
         key = 1
         cx = 1000px
-        cy = 250px
-        fill = "#808080"
-        r = "8"
+        cy = 260px
+        fill = "#08519c"
+        r = "15"
+        on:click = {() => {subset = filterBins(valuemap, 80, 100), minMax = [80, 100]}}
         />
-        <text x = "1020" y = "255"> No data available</text>
-        <!-- <circle
-        key = 1
+        <text x = "1030" y = "267" style = "font-size: 22"> 80 - 100</text>
+        <circle
+        key = 2
         cx = 1000px
-        cy = 280px
-        fill = "#fff"
-        r = "8"
-        on:click = {() => {subset = filterBins(valuemap, 0, 100)}}
-        /> -->
+        cy = 300px
+        fill = "#808080"
+        r = "15"
+        />
+        <text x = "1030" y = "307" style = "font-size: 22"> No data available</text>
         <text 
-        x = "1020" 
-        y = "285" 
+        key = 1
+        x = "1030" 
+        y = "347" 
         fill = {resetColor}
+        style = "font-size: 22"
         on:mouseover = {function(e) {
             resetColor = "white"
         }}
         on:mouseout = {function(e) {
             resetColor = "#000"
         }}
-        on:click = {() => {subset = filterBins(valuemap, 0, 100)}} 
-        style="border-width:3px; border-style:solid; border-color:#FF0000; padding: 1em;"> Reset Filter</text>
+        on:click = {() => {subset = filterBins(valuemap, 0, 100), minMax = [0, 100]}} 
+        > Reset Filter</text>
     </g>
     </svg>
 </div>
 
 <div class = "slider">
-    <label>{slider_label}</label>
+    <label size = "22">{slider_label}</label>
     <RangeSlider 
     formatter = {v => years[v]}
     min = 0 
@@ -293,6 +283,8 @@
     ariaLabels = {["2000", '2005', '2010', '2015', '2020']}
     on:change = {(e) => {
         chosenYear = e.detail.value
+        valuemap = getYear(data, chosenYear)
+        subset = filterBins(valuemap, minMax[0], minMax[1])
     }}
     pips = true />
 
@@ -302,10 +294,17 @@
     .slider {
         margin: auto;
         top: 50%;
-        transform: translate(0, -50%);
+        transform: translate(0, 30%);
         width: 50%;
     }
-    .cursor{
-    cursor:url(http://www.icon100.com/up/3772/128/425-hand-pointer.png), auto;
+    .slider label {
+        font-size: 20px
+    }
+    .legend circle[key = "1"]:hover{
+        cursor: pointer;
+        opacity: 0.60;
+    }
+    .legend text[key = "1"]:hover{
+        cursor: pointer;
     }
 </style>

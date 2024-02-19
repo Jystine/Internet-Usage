@@ -16,11 +16,13 @@
 
 <main>
   <h1>Internet Usage Overtime</h1>
+  <p>This data is sourced from UNdata</p>
   <Internet {data} />
 </main>
 
 <style>
     main {
         text-align: center;
+        font-family: 'Open Sans', sans-serif;
     }
 </style>
