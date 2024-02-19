@@ -148,11 +148,6 @@
     }
 
     let resetColor = "#000"
-    let bin1Color = "#eff3ff"
-    let bin2Color = "#bdd7e7"
-    let bin3Color = "#6baed6"
-    let bin4Color = "#3182bd"
-    let bin5Color = "#08519c"
 
     function colorBin2(percentage){
         if (percentage >= 0 && percentage < 20) {
