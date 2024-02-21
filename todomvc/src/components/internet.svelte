@@ -216,6 +216,7 @@
         }}
         on:click = {() => {subset = filterBins(valuemap, 0, 100), minMax = [0, 100]}} 
         > Reset Filter</text>
+        <text x = "-320" y = "387">Click on the circles to filter for a specific bin</text>
     </g>
     </svg>
 </div>
@@ -262,6 +263,5 @@
     .tooltip text{
         text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
              1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
-        border: 10px solid red;
     }
 </style>

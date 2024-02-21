@@ -15,8 +15,10 @@
 </script>
 
 <main>
-  <h1>Internet Usage Overtime</h1>
-  <p>This data is sourced from UNdata</p>
+  <h1>Internet Usage Increases Dramatically Since the Start of the Century!</h1>
+  <p>The Internet was first invented back in 1983 and has since then become a staple in today's world with a lot of people using
+    it on a daily basis. <br> <a href = "https://data.un.org/">UNdata </a>has recorded how much of a region's population uses the Internet during certain years. Let's see how Internet usage has changed
+    <br>since the start of the 21st century.</p>
   <Internet {data} />
 </main>
 
