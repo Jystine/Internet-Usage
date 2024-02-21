@@ -19,79 +19,10 @@
     let border;
     let countries = [];
 
-    // let tooltipPt = null;
-    // function onPointerMove(event) {
-    //     var index = d3.select(valuemap).attr('Region')
-    //     // const i = d3.bisect(data, countries.invert(d3.pointer(event)[0]))
-    //     // tooltipPt = data[i]
-    // }
-
-    // $: d3.select(svg).selectChild("g")
-    // .on('mouseover', function (d, i) {
-    //       d3.select(this).transition()
-    //            .duration('50')
-    //            .attr('opacity', '.85'); })
-    //  .on('mouseout', function (d, i) {
-    //       d3.select(this).transition()
-    //            .duration('50')
-    //            .attr('opacity', '1');})
-
-//     var tooltip = d3.select("internet-plot")
-//     .append("div")
-//     .style("opacity", 0)
-//     .attr("class", "tooltip")
-//     .style("background-color", "white")
-//     .style("border", "solid")
-//     .style("border-width", "2px")
-//     .style("border-radius", "5px")
-//     .style("padding", "5px")
-//     var mouseover = function(d) {
-//     tooltip
-//       .style("opacity", 1)
-//     d3.select(this)
-//       .style("stroke", "black")
-//       .style("opacity", 1)
-//     }
-//     var mousemove = function(d) {
-//     tooltip
-//       .html("The exact value of<br>this cell is: " + 10)
-//       .style("left", (d3.pointer(event)[0]+70) + "px")
-//       .style("top", (d3.pointer(event)[1]) + "px")
-//   }
-//     var mouseleave = function(d) {
-//     d3.selectAll(".Country")
-//       .transition()
-//       .duration(200)
-//       .style("opacity", .8)
-//     d3.select(this)
-//       .transition()
-//       .duration(200)
-//       .style("stroke", "transparent")
-//   }
-//     $: d3.select(svg)
-//     .on("mouseover", mouseover)
-//     .on("mousemove", mousemove)
-//     .on("mouseleave", mouseleave)
-
-
-
-    // $: d3.select(svg)
-    // .on('mouseover', function(d){
-    //   var index = d3.select(this).attr(Object.keys(valuemap));
-    //   var percentage = d3.select(this).attr('Percentage');
-    //   var region = d3.select(this).attr('Region');
-    //   console.log(index)
-    //   //var county = index == -1 ? 'unknown' : eduData[index].area_name;
-    //   var tooltip = d3.select('#tooltip')
-    //   //.style('left', d3.event.pageX + 10 + 'px')
-    //   //.style('top', d3.event.pageY + 10 + 'px')
-    //   //.style('display', 'block')
-    //   .attr('data-education', percentage)
-    //   .html(`${region}: ${percentage}`)
-    // })
-    // .on('mouseout', ()=>d3.select('#tooltip').style('display', 'none'));
-
-    // const colorScale = scaleQuantize([1, 7], schemeBlues[6]);
+    let tooltipPt = null;
+    function onPointerMove(event, subset, iso) {
+        tooltipPt = {Percentage: subset[Number(iso)].Percentage, Region: subset[Number(iso)].Region, x: event.clientX, y: event.clientY}
+    }
 
     const years = ['2000', '2005', '2010', '2015', '2020'];
     let filterPercentage = [];
@@ -180,7 +111,13 @@
             {#each countries.features as country} 
                 {#if (country.id !== undefined || subset[Number(country.id)] !== undefined)} 
                     {#if (Number(country.id) in subset)}
-        ​               <path d = {path(country)} stroke = "#000" fill={colorBin2(subset[Number(country.id)].Percentage)} /> 
+        ​               <path 
+                        key = "country"
+                        d = {path(country)} 
+                        stroke = "#000" 
+                        fill={colorBin2(subset[Number(country.id)].Percentage)} 
+                        on:mousemove = "{(event) => {onPointerMove(event, subset, country.id)}}" 
+                        on:mouseleave = "{() => {tooltipPt = null}}"/> 
                 {:else}
                     <path d = {path(country)} stroke = "#000" fill= "#808080" />
                     {/if}
@@ -191,67 +128,83 @@
     <path d = {path(border)} fill = "none" stroke = "#000" />
     <path d = {path(outline)} fill = "none" stroke = "#000" />
 
+    <!-- {#if tooltipPt == null}
+    <g transform= "translate(0, -10)">
+        <text font-weight="bold">Percentage:</text>
+      </g>
+      <g transform = "translate(0, 20)">
+        <text font-weight = "bold">Region: </text>
+      </g>
+    {/if} -->
+
+    {#if tooltipPt}
+      <g class = "tooltip" transform= "translate({tooltipPt.x - 300}, {tooltipPt.y - 100})">
+        <text font-weight="bold" style= "border: 2px solid transparent">Percentage: {tooltipPt.Percentage}%</text>
+      </g>
+      <g class = "tooltip" transform = "translate({tooltipPt.x - 300}, {tooltipPt.y - 80})">
+        <text font-weight = "bold">Region: {tooltipPt.Region}</text>
+      </g>
+    {/if}
+
     <g class = "legend" stroke = "#000">
-        <text x = "990" y = "70" style = "font-size: 22" font-weight = bold>Percentage Bins</text>
+        <text x = "-270" y = "70" style = "font-size: 22" font-weight = bold>Percentage Bins</text>
         <circle
         key = 1
-        cx = 1000px
+        cx = -250px
         cy = 100px
         fill = "#eff3ff"
         r = "15"
         on:click = {() => {subset = filterBins(valuemap, 0, 20), minMax = [0, 20]}}
-        on:mouseenter = {() => {
-        }}
         />
-        <text x = "1030" y = "107" style = "font-size: 22"> 0 - 20</text>
+        <text x = "-220" y = "107" style = "font-size: 22"> 0 - 20</text>
         <circle
         key = 1
-        cx = 1000px
+        cx = -250px
         cy = 140px
         fill = "#bdd7e7"
         r = "15"
         on:click = {() => {subset = filterBins(valuemap, 20, 40), minMax = [20, 40]}}
         style = "hover = cursor:pointer"
         />
-        <text x = "1030" y = "147" style = "font-size: 22"> 20 - 40</text>
+        <text x = "-220" y = "147" style = "font-size: 22"> 20 - 40</text>
         <circle
         key = 1
-        cx = 1000px
+        cx = -250px
         cy = 180px
         fill = "#6baed6"
         r = "15"
         on:click = {() => {subset = filterBins(valuemap, 40, 60), minMax = [40, 60]}}
         />
-        <text x = "1030" y = "187" style = "font-size: 22"> 40 - 60</text>
+        <text x = "-220" y = "187" style = "font-size: 22"> 40 - 60</text>
         <circle
         key = 1
-        cx = 1000px
+        cx = -250px
         cy = 220px
         fill = "#3182bd"
         r = "15"
         on:click = {() => {subset = filterBins(valuemap, 60, 80), minMax = [60, 80]}}
         />
-        <text x = "1030" y = "227" style = "font-size: 22"> 60 - 80</text>
+        <text x = "-220" y = "227" style = "font-size: 22"> 60 - 80</text>
         <circle
         key = 1
-        cx = 1000px
+        cx = -250px
         cy = 260px
         fill = "#08519c"
         r = "15"
         on:click = {() => {subset = filterBins(valuemap, 80, 100), minMax = [80, 100]}}
         />
-        <text x = "1030" y = "267" style = "font-size: 22"> 80 - 100</text>
+        <text x = "-220" y = "267" style = "font-size: 22"> 80 - 100</text>
         <circle
         key = 2
-        cx = 1000px
+        cx = -250px
         cy = 300px
         fill = "#808080"
         r = "15"
         />
-        <text x = "1030" y = "307" style = "font-size: 22"> No data available</text>
+        <text x = "-220" y = "307" style = "font-size: 22"> No data available</text>
         <text 
         key = 1
-        x = "1030" 
+        x = "-220" 
         y = "347" 
         fill = {resetColor}
         style = "font-size: 22"
@@ -302,5 +255,13 @@
     }
     .legend text[key = "1"]:hover{
         cursor: pointer;
+    }
+    .data path[key = "country"]:hover{
+        stroke-width: 3;
+    }
+    .tooltip text{
+        text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+             1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+        border: 10px solid red;
     }
 </style>
